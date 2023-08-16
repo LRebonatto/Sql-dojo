@@ -1,6 +1,7 @@
 1  Listar os empregados (nomes) que tem salário maior que seu chefe (usar o join)
 
-
+SELECT e1.nome FROM empregados e1 
+JOIN empregados e2 ON e1.supervisor_id=e2.emp_id where e1.salario > e2.salario;
 
 --  empregado | 
 -- -----------+
@@ -12,6 +13,11 @@
 
 2 Listar o maior salario de cada departamento (usa o group by e o IN )
 
+SELECT e.dep_id, max(e.salario) FROM empregados e 
+JOIN departamentos d ON e.dep_id=d.dep_id
+GROUP BY e.dep_id
+ORDER BY e.dep_id;
+
 --  dep_id |  max  
 -- --------+-------
 --       1 | 10000
@@ -22,6 +28,17 @@
 
 
 3 Listar o dep_id, nome e o salario do funcionario com maior salario dentro de cada departamento (usar o with)
+
+With MaioSalario AS
+    (
+            SELECT e.dep_id, max(e.salario) FROM empregados e JOIN departamentos d ON e.dep_id=d.dep_id GROUP BY e.dep_id 
+    )
+SELECT e.dep_id, e.nome, e.salario
+FROM empregados e 
+JOIN MaioSalario ms ON e.dep_id=ms.dep_id
+WHERE e.salario = ms.max;
+
+    
 --  dep_id |  nome   | salario 
 -- --------+---------+---------
 --       3 | Joao    |    6000
@@ -31,6 +48,17 @@
 
 
 4 Listar os nomes departamentos que tem menos de 3 empregados;
+
+//TODO finish this
+With LessThree AS
+    (
+            SELECT e.dep_id, count(e.dep_id) FROM empregados e JOIN departamentos d ON e.dep_id=d.dep_id GROUP BY e.dep_id 
+    )
+SELECT *
+FROM empregados e 
+JOIN LessThree ms ON e.dep_id=ms.dep_id
+WHERE ms.count < 3;
+
 
 --    nome    
 -- -----------
